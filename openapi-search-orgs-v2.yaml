@@ -1,0 +1,183 @@
+openapi: 3.0.3
+info:
+  title: RBOX Search & Orgs API
+  version: 2.0.0
+  description: >
+    검색/필터 고도화 및 조직 권한 v2 API.
+    공통 응답 래퍼: ApiResponse<T> = { data, meta?, error? }
+servers:
+  - url: http://localhost:8080
+
+tags:
+  - name: Search
+    description: 고급 검색
+  - name: Orgs
+    description: 조직 및 컨텍스트
+  - name: Objects
+    description: 개체
+
+paths:
+  /v2/search/listings:
+    get:
+      tags: [Search]
+      summary: 고급 검색(판매/경매)
+      parameters:
+        - in: query
+          name: type
+          schema: { type: string, enum: [LISTING, AUCTION, ALL], default: ALL }
+        - in: query
+          name: spcCd
+          schema: { type: string }
+        - in: query
+          name: sexCd
+          schema: { type: string }
+        - in: query
+          name: sizeCd
+          schema: { type: string }
+        - in: query
+          name: priceMin
+          schema: { type: number }
+        - in: query
+          name: priceMax
+          schema: { type: number }
+        - in: query
+          name: qualLv
+          schema: { type: string }
+        - in: query
+          name: profLv
+          schema: { type: string }
+        - in: query
+          name: morphMode
+          schema: { type: string, enum: [ANY, ALL], default: ANY }
+        - in: query
+          name: morphCat
+          schema: { type: string }
+        - in: query
+          name: morphIds
+          schema: { type: string, description: "CSV of mphId" }
+        - in: query
+          name: hasImage
+          schema: { type: boolean }
+        - in: query
+          name: ownerUserId
+          schema: { type: integer, format: int64 }
+        - in: query
+          name: sort
+          schema: { type: string, default: "-regDt" }
+        - in: query
+          name: page
+          schema: { type: integer, default: 1 }
+        - in: query
+          name: size
+          schema: { type: integer, default: 20, maximum: 100 }
+      responses:
+        '200': { description: OK }
+
+  /v2/search/objects:
+    get:
+      tags: [Search]
+      summary: 고급 검색(개체)
+      parameters:
+        - in: query
+          name: spcCd
+          schema: { type: string }
+        - in: query
+          name: sexCd
+          schema: { type: string }
+        - in: query
+          name: sizeCd
+          schema: { type: string }
+        - in: query
+          name: morphMode
+          schema: { type: string, enum: [ANY, ALL], default: ANY }
+        - in: query
+          name: morphIds
+          schema: { type: string }
+        - in: query
+          name: sort
+          schema: { type: string, enum: [-quality, -likes, -regDt], default: -regDt }
+        - in: query
+          name: page
+          schema: { type: integer, default: 1 }
+        - in: query
+          name: size
+          schema: { type: integer, default: 20 }
+      responses:
+        '200': { description: OK }
+
+  /v2/orgs:
+    post:
+      tags: [Orgs]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [orgNm]
+              properties:
+                orgNm: { type: string }
+                orgTp: { type: string, enum: [SHOP, TEAM], default: SHOP }
+      responses: { '201': { description: Created } }
+    get:
+      tags: [Orgs]
+      security: [{ bearerAuth: [] }]
+      responses: { '200': { description: OK } }
+
+  /v2/orgs/{orgId}/members:
+    post:
+      tags: [Orgs]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: orgId
+          required: true
+          schema: { type: integer, format: int64 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId, roleCd]
+              properties:
+                userId: { type: integer, format: int64 }
+                roleCd: { type: string, enum: [OWNER, ADMIN, EDITOR, VIEWER] }
+      responses: { '201': { description: Added } }
+
+  /v2/context:
+    get:
+      tags: [Orgs]
+      security: [{ bearerAuth: [] }]
+      responses: { '200': { description: OK } }
+
+  /v2/objects:
+    post:
+      tags: [Objects]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: header
+          name: X-RBOX-ORG-ID
+          required: false
+          schema: { type: integer, format: int64 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [spcCd, sexCd]
+              properties:
+                spcCd: { type: string }
+                name: { type: string }
+                sexCd: { type: string }
+                ownerType: { type: string, enum: [USER, ORG] }
+      responses: { '201': { description: Created } }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
