@@ -10,17 +10,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.rbox.common.api.ApiResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 /**
  * 사용자 대시보드 요약 API.
  */
 @RestController
 @RequestMapping("/dashboard")
+@Tag(name = "Dashboard", description = "사용자 대시보드 요약 API")
 public class DashboardWebCtr {
 
     /**
      * 오늘/이번주 처리해야 할 브리딩 작업 요약을 반환한다.
      */
     @GetMapping("/overview")
+    @Operation(summary = "대시보드 요약", description = "오늘과 이번주 브리딩 작업 요약을 반환합니다")
     public ApiResponse<Map<String, Object>> overview() {
         // TODO 실제 데이터 연동 필요
         Map<String, Integer> today = Map.of(
