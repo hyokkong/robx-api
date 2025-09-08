@@ -12,16 +12,21 @@ import lombok.RequiredArgsConstructor;
 
 import com.rbox.common.api.ApiResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 /**
  * Controller exposing the v2 search endpoints.
  */
 @RestController
 @RequestMapping("/v2/search")
 @RequiredArgsConstructor
+@Tag(name = "Search v2", description = "검색 API v2")
 public class SearchV2Controller {
     private final SearchService service;
 
     @GetMapping("/listings")
+    @Operation(summary = "리스트 검색", description = "리스트를 검색합니다")
     public ApiResponse<Map<String, Object>> listings(
             @RequestParam(required = false, defaultValue = "ALL") String type,
             @RequestParam(required = false) String spcCd,
@@ -52,6 +57,7 @@ public class SearchV2Controller {
     }
 
     @GetMapping("/objects")
+    @Operation(summary = "개체 검색", description = "개체를 검색합니다")
     public ApiResponse<Map<String, Object>> objects(
             @RequestParam(required = false) String spcCd,
             @RequestParam(required = false) String sexCd,

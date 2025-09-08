@@ -12,16 +12,21 @@ import com.rbox.common.api.ApiResponse;
 import com.rbox.lineage.application.port.in.LineageGraph;
 import com.rbox.lineage.application.port.in.LineageUseCase;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 /**
  * 계보 조회 API 컨트롤러.
  */
 @RestController
 @RequestMapping("/lineage")
 @RequiredArgsConstructor
+@Tag(name = "Lineage", description = "계보 조회 API")
 public class LineageWebCtr {
     private final LineageUseCase useCase;
 
     @GetMapping("/{id}/ancestors")
+    @Operation(summary = "조상 계보 조회", description = "특정 개체의 조상 계보를 조회합니다")
     public ApiResponse<LineageGraph> ancestors(@PathVariable Long id,
             @RequestParam(name = "depth", defaultValue = "3") int depth) {
         // 데모용으로 uid=1 고정
