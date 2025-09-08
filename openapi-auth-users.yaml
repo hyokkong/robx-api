@@ -1,0 +1,223 @@
+openapi: 3.0.3
+info:
+  title: RBOX Auth & Users API
+  version: 1.0.0
+  description: >
+    Sprint 1 인증/사용자 API.  
+    공통 응답 래퍼: ApiResponse<T> = { data, meta?, error? }  
+    에러시 error = { code, message }.
+
+servers:
+  - url: http://localhost:8080
+
+tags:
+  - name: Auth
+    description: 인증/토큰 발급
+  - name: Users
+    description: 사용자 기본 정보
+
+paths:
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: 로그인(액세스/리프레시 발급)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginReq'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiRespToken'
+              examples:
+                ok:
+                  value:
+                    data:
+                      accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                      refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    meta: null
+                    error: null
+        '401':
+          description: Unauthorized(자격 불일치)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiRespError' }
+              examples:
+                unauthorized:
+                  value:
+                    data: null
+                    meta: null
+                    error: { code: "ERR_UNAUTHORIZED", message: "invalid credentials" }
+        '422':
+          description: 요청 검증 오류
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiRespError' }
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: 리프레시로 액세스 갱신(회전 가능)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshReq'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiRespToken'
+        '401':
+          description: Unauthorized(리프레시 토큰 위조/만료/타입 불일치)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiRespError' }
+              examples:
+                unauthorized:
+                  value:
+                    data: null
+                    meta: null
+                    error: { code: "ERR_UNAUTHORIZED", message: "invalid refresh token" }
+        '422':
+          description: 요청 검증 오류
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiRespError' }
+
+  /users/me:
+    get:
+      tags: [Users]
+      summary: 내 정보 조회
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiRespUser'
+              examples:
+                ok:
+                  value:
+                    data:
+                      id: 123
+                      email: "user@example.com"
+                      nick: "user"
+                      stat: "ACTV"
+                    meta: null
+                    error: null
+        '401':
+          description: Unauthorized(토큰 누락/유효하지 않음)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiRespError' }
+        '404':
+          description: Not Found(사용자 없음)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiRespError' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ApiRespToken:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/TokenResp'
+        meta:
+          nullable: true
+        error:
+          nullable: true
+          $ref: '#/components/schemas/ApiError'
+    ApiRespUser:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/UserMe'
+        meta:
+          nullable: true
+        error:
+          nullable: true
+          $ref: '#/components/schemas/ApiError'
+    ApiRespError:
+      type: object
+      properties:
+        data:
+          nullable: true
+        meta:
+          nullable: true
+        error:
+          $ref: '#/components/schemas/ApiError'
+      required: [error]
+
+    LoginReq:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 120
+        password:
+          type: string
+          minLength: 8
+          maxLength: 128
+
+    RefreshReq:
+      type: object
+      required: [refreshToken]
+      properties:
+        refreshToken:
+          type: string
+
+    TokenResp:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+      required: [accessToken, refreshToken]
+
+    UserMe:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        email:
+          type: string
+          format: email
+        nick:
+          type: string
+        stat:
+          type: string
+          description: 사용자 상태코드(예: ACTV, BLK 등)
+      required: [id, email]
+
+    ApiError:
+      type: object
+      properties:
+        code:
+          type: string
+          example: ERR_UNAUTHORIZED
+        message:
+          type: string
+          example: invalid token
+      required: [code, message]
