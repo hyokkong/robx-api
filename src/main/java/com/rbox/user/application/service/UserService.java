@@ -1,14 +1,25 @@
 package com.rbox.user.application.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import com.rbox.common.api.ErrorCode;
+import com.rbox.common.exception.ApiException;
+import com.rbox.user.adapter.out.persistence.repository.UserRepository;
 import com.rbox.user.application.port.in.UserMe;
 import com.rbox.user.application.port.in.UserUseCase;
 
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserUseCase {
+    private final UserRepository repository;
+
     @Override
     public UserMe getMe(Long uid) {
-        return new UserMe(uid, "user@example.com", "user", "ACTV");
+        var user = repository.findById(uid);
+        if (user == null) {
+            throw new ApiException(ErrorCode.NOT_FOUND, "user not found");
+        }
+        return new UserMe(user.id(), user.email(), user.nick(), user.stat());
     }
 }
