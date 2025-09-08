@@ -15,6 +15,10 @@ tags:
     description: 인증/토큰 발급
   - name: Users
     description: 사용자 기본 정보
+  - name: Profiles
+    description: 공개 프로필
+  - name: Reviews
+    description: 사용자 리뷰
 
 paths:
   /auth/login:
@@ -126,6 +130,124 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/ApiRespError' }
+
+  /profiles/{userId}/public:
+    get:
+      tags: [Profiles]
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '200': { description: OK }
+        '404': { description: Not Found }
+
+  /profiles/{userId}/summary:
+    get:
+      tags: [Profiles]
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '200': { description: OK }
+
+  /profiles/me:
+    patch:
+      tags: [Profiles]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bio: { type: string, maxLength: 1000 }
+                linkUrl: { type: string, maxLength: 255 }
+                badges: { type: object, additionalProperties: true }
+      responses:
+        '200': { description: OK }
+        '401': { description: Unauthorized }
+
+  /profiles/{userId}/reviews:
+    get:
+      tags: [Reviews]
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema: { type: integer, format: int64 }
+        - in: query
+          name: page
+          schema: { type: integer, default: 1 }
+        - in: query
+          name: size
+          schema: { type: integer, default: 20 }
+      responses:
+        '200': { description: OK }
+    post:
+      tags: [Reviews]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema: { type: integer, format: int64 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [rating]
+              properties:
+                rating: { type: integer, minimum: 1, maximum: 5 }
+                content: { type: string, maxLength: 2000 }
+                objId: { type: integer, format: int64, nullable: true }
+                listingId: { type: integer, format: int64, nullable: true }
+                auctionId: { type: integer, format: int64, nullable: true }
+      responses:
+        '201': { description: Created }
+        '401': { description: Unauthorized }
+        '422': { description: Invalid }
+
+  /profiles/reviews/{id}/report:
+    post:
+      tags: [Reviews]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer, format: int64 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason: { type: string }
+                memo: { type: string, maxLength: 255 }
+      responses:
+        '201': { description: Created }
+
+  /profiles/reviews/{id}:
+    delete:
+      tags: [Reviews]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '204': { description: Deleted }
+        '403': { description: Forbidden }
 
 components:
   securitySchemes:
