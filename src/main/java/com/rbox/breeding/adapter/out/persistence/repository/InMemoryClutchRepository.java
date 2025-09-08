@@ -7,12 +7,9 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.springframework.stereotype.Repository;
-
 /**
  * 메모리에 클러치 정보를 저장하는 구현체.
  */
-@Repository
 public class InMemoryClutchRepository implements ClutchRepository {
     private final Map<Long, ClutchEntity> store = new ConcurrentHashMap<>();
     private final AtomicLong seq = new AtomicLong(1);

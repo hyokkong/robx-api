@@ -6,12 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.springframework.stereotype.Repository;
-
 /**
  * 메모리에 개체 이미지를 저장하는 테스트용 구현체.
  */
-@Repository
 public class InMemoryObjectImageRepository implements ObjectImageRepository {
     private final Map<Long, List<ObjectImageEntity>> store = new HashMap<>();
     private final AtomicLong seq = new AtomicLong(1);

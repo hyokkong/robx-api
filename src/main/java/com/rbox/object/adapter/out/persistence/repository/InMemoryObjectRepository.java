@@ -7,12 +7,9 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.springframework.stereotype.Repository;
-
 /**
  * 메모리에 개체 정보를 저장하는 테스트용 구현체.
  */
-@Repository
 public class InMemoryObjectRepository implements ObjectRepository {
     private final Map<Long, ObjectEntity> store = new ConcurrentHashMap<>();
     private final AtomicLong seq = new AtomicLong(1);
