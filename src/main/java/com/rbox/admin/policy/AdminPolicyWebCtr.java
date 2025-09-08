@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/admin")
 @RequiredArgsConstructor
 @Tag(name = "Admin Policy", description = "관리자 정책 API")
-public class AdminPolicyController {
+public class AdminPolicyWebCtr {
     private final AdminPolicyService service;
 
     // Market policies
@@ -31,7 +31,7 @@ public class AdminPolicyController {
     @Operation(summary = "마켓 정책 등록/수정", description = "마켓 정책을 등록하거나 수정합니다")
     public ApiResponse<MarketPolicy> upsertMarket(@RequestHeader("X-USER-ID") Long uid,
                                                    @PathVariable String polCd,
-                                                   @Valid @RequestBody MarketPolicyRequest req) {
+                                                   @Valid @RequestBody MarketPolicyReq req) {
         return ApiResponse.success(service.upsertMarketPolicy(polCd, req, uid));
     }
 
@@ -54,7 +54,7 @@ public class AdminPolicyController {
     @Operation(summary = "브리딩 정책 등록/수정", description = "브리딩 정책을 등록하거나 수정합니다")
     public ApiResponse<BreedingPolicy> upsertBreeding(@RequestHeader("X-USER-ID") Long uid,
                                                        @PathVariable String polCd,
-                                                       @Valid @RequestBody BreedingPolicyRequest req) {
+                                                       @Valid @RequestBody BreedingPolicyReq req) {
         return ApiResponse.success(service.upsertBreedingPolicy(polCd, req, uid));
     }
 
@@ -69,7 +69,7 @@ public class AdminPolicyController {
     @Operation(summary = "퀄리티 정책 등록/수정", description = "퀄리티 정책을 등록하거나 수정합니다")
     public ApiResponse<QualityPolicy> upsertQuality(@RequestHeader("X-USER-ID") Long uid,
                                                      @PathVariable String polCd,
-                                                     @Valid @RequestBody QualityPolicyRequest req) {
+                                                     @Valid @RequestBody QualityPolicyReq req) {
         return ApiResponse.success(service.upsertQualityPolicy(polCd, req, uid));
     }
 
@@ -84,7 +84,7 @@ public class AdminPolicyController {
     @Operation(summary = "사이즈 정책 등록/수정", description = "사이즈 정책을 등록하거나 수정합니다")
     public ApiResponse<SizePolicy> upsertSize(@RequestHeader("X-USER-ID") Long uid,
                                                @PathVariable String spcCd, @PathVariable String szCd,
-                                               @Valid @RequestBody SizePolicyRequest req) {
+                                               @Valid @RequestBody SizePolicyReq req) {
         return ApiResponse.success(service.upsertSizePolicy(spcCd, szCd, req, uid));
     }
 

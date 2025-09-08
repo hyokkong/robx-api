@@ -25,7 +25,7 @@ public class AuctionService {
         this.clock = clock;
     }
 
-    public synchronized Auction create(Long ownerId, AuctionCreateRequest req) {
+    public synchronized Auction create(Long ownerId, AuctionCreateReq req) {
         if (req.startAt().isAfter(req.endAt())) {
             throw new IllegalArgumentException("startAt must be before endAt");
         }

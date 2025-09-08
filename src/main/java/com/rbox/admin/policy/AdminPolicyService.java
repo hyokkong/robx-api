@@ -39,7 +39,7 @@ public class AdminPolicyService {
         return new Paged<>(content, total, page, size);
     }
 
-    public MarketPolicy upsertMarketPolicy(String polCd, MarketPolicyRequest req, Long uid) {
+    public MarketPolicy upsertMarketPolicy(String polCd, MarketPolicyReq req, Long uid) {
         MarketPolicy old = marketPolicies.get(polCd);
         MarketPolicy newer = new MarketPolicy(polCd, req.polVal(), req.useYn(), clock.instant());
         marketPolicies.put(polCd, newer);
@@ -56,7 +56,7 @@ public class AdminPolicyService {
         return breedingPolicies.get(polCd);
     }
 
-    public BreedingPolicy upsertBreedingPolicy(String polCd, BreedingPolicyRequest req, Long uid) {
+    public BreedingPolicy upsertBreedingPolicy(String polCd, BreedingPolicyReq req, Long uid) {
         if (req.etaMin() > req.etaMax()) throw new IllegalArgumentException("etaMin <= etaMax");
         BreedingPolicy old = breedingPolicies.get(polCd);
         BreedingPolicy newer = new BreedingPolicy(polCd, req.etaMin(), req.etaMax(), req.cdlDay(), req.layGap());
@@ -69,7 +69,7 @@ public class AdminPolicyService {
         return qualityPolicies.get(polCd);
     }
 
-    public QualityPolicy upsertQualityPolicy(String polCd, QualityPolicyRequest req, Long uid) {
+    public QualityPolicy upsertQualityPolicy(String polCd, QualityPolicyReq req, Long uid) {
         if (req.g1Min() > req.g2Min() || req.g2Min() > req.g3Min())
             throw new IllegalArgumentException("g1<=g2<=g3");
         QualityPolicy old = qualityPolicies.get(polCd);
@@ -83,7 +83,7 @@ public class AdminPolicyService {
         return new ArrayList<>(sizePolicies.getOrDefault(spcCd, Map.of()).values());
     }
 
-    public SizePolicy upsertSizePolicy(String spcCd, String szCd, SizePolicyRequest req, Long uid) {
+    public SizePolicy upsertSizePolicy(String spcCd, String szCd, SizePolicyReq req, Long uid) {
         if (req.ageMin() != null && req.ageMax() != null && req.ageMin() > req.ageMax())
             throw new IllegalArgumentException("ageMin <= ageMax");
         if (req.wtMin() != null && req.wtMax() != null && req.wtMin() > req.wtMax())

@@ -22,7 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/v2/search")
 @RequiredArgsConstructor
 @Tag(name = "Search v2", description = "검색 API v2")
-public class SearchV2Controller {
+public class SearchV2WebCtr {
     private final SearchService service;
 
     @GetMapping("/listings")
@@ -43,7 +43,7 @@ public class SearchV2Controller {
             @RequestParam(required = false, defaultValue = "-regDt") String sort,
             @RequestParam(required = false, defaultValue = "1") Integer page,
             @RequestParam(required = false, defaultValue = "20") Integer size) {
-        SearchListingsRequest req = new SearchListingsRequest(type, spcCd, sexCd, sizeCd,
+        SearchListingsReq req = new SearchListingsReq(type, spcCd, sexCd, sizeCd,
                 priceMin == null ? null : java.math.BigDecimal.valueOf(priceMin),
                 priceMax == null ? null : java.math.BigDecimal.valueOf(priceMax),
                 morphMode, morphCat, morphIds, hasImage, ownerUserId, ownerOrgId, sort, page, size);
@@ -67,7 +67,7 @@ public class SearchV2Controller {
             @RequestParam(required = false, defaultValue = "-regDt") String sort,
             @RequestParam(required = false, defaultValue = "1") Integer page,
             @RequestParam(required = false, defaultValue = "20") Integer size) {
-        SearchObjectsRequest req = new SearchObjectsRequest(spcCd, sexCd, sizeCd, morphMode, morphIds, sort, page, size);
+        SearchObjectsReq req = new SearchObjectsReq(spcCd, sexCd, sizeCd, morphMode, morphIds, sort, page, size);
         SearchService.SearchResult result = service.searchObjects(req);
         Map<String, Object> data = new HashMap<>();
         data.put("content", result.content());
