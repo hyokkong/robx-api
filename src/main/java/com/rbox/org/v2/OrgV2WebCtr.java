@@ -28,7 +28,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/v2")
 @RequiredArgsConstructor
 @Tag(name = "Organization v2", description = "조직 관리 API v2")
-public class OrgV2Controller {
+public class OrgV2WebCtr {
     private final OrgService service;
 
     private Long getUserId(String header) {

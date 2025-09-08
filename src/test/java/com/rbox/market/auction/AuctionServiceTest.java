@@ -30,7 +30,7 @@ class AuctionServiceTest {
 
     @Test
     void createBidWinnerAndPay() {
-        AuctionCreateRequest req = new AuctionCreateRequest(1001L, "KRW", 100, 10,
+        AuctionCreateReq req = new AuctionCreateReq(1001L, "KRW", 100, 10,
                 Instant.parse("2025-10-01T00:00:00Z"), Instant.parse("2025-10-01T12:00:00Z"), false);
         Auction auc = service.create(1L, req);
         service.placeBid(auc.getId(), 2L, 100);
@@ -44,7 +44,7 @@ class AuctionServiceTest {
 
     @Test
     void expirePayment() {
-        AuctionCreateRequest req = new AuctionCreateRequest(1001L, "KRW", 100, 10,
+        AuctionCreateReq req = new AuctionCreateReq(1001L, "KRW", 100, 10,
                 Instant.parse("2025-10-01T00:00:00Z"), Instant.parse("2025-10-01T12:00:00Z"), false);
         Auction auc = service.create(1L, req);
         service.placeBid(auc.getId(), 2L, 100);

@@ -16,11 +16,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/market/auctions")
 @Tag(name = "Auction", description = "경매 관련 API")
-public class AuctionController {
+public class AuctionWebCtr {
     private final AuctionService service;
     private final Clock clock;
 
-    public AuctionController(AuctionService service, Clock clock) {
+    public AuctionWebCtr(AuctionService service, Clock clock) {
         this.service = service;
         this.clock = clock;
     }
@@ -34,7 +34,7 @@ public class AuctionController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "경매 생성", description = "새로운 경매를 생성합니다")
     public IdResponse create(@RequestHeader("X-USER-ID") String user,
-                             @RequestBody AuctionCreateRequest req) {
+                             @RequestBody AuctionCreateReq req) {
         Auction auc = service.create(getUserId(user), req);
         return new IdResponse(auc.getId());
     }
@@ -57,7 +57,7 @@ public class AuctionController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "입찰", description = "경매에 입찰합니다")
     public Bid placeBid(@RequestHeader("X-USER-ID") String user,
-                        @PathVariable Long id, @RequestBody BidRequest req) {
+                        @PathVariable Long id, @RequestBody BidReq req) {
         return service.placeBid(id, getUserId(user), req.amount());
     }
 
@@ -71,14 +71,14 @@ public class AuctionController {
 
     @PostMapping("/{id}/winner/pay")
     @Operation(summary = "낙찰자 결제 처리", description = "낙찰자의 결제 정보를 처리합니다")
-    public void pay(@PathVariable Long id, @RequestBody PayRequest req) {
+    public void pay(@PathVariable Long id, @RequestBody PayReq req) {
         Instant paidAt = req.paidAt() != null ? req.paidAt() : clock.instant();
         service.markPaid(id, paidAt, req.txId());
     }
 
     @PostMapping("/{id}/winner/cancel")
     @Operation(summary = "낙찰 취소", description = "경매 낙찰을 취소합니다")
-    public void cancel(@PathVariable Long id, @RequestBody CancelRequest req) {
+    public void cancel(@PathVariable Long id, @RequestBody CancelReq req) {
         service.cancel(id, req.reason());
     }
 

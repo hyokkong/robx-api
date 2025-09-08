@@ -14,11 +14,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class SearchService {
-    public SearchResult searchListings(SearchListingsRequest req) {
+    public SearchResult searchListings(SearchListingsReq req) {
         return new SearchResult(Collections.emptyList(), 0, req.page(), req.size());
     }
 
-    public SearchResult searchObjects(SearchObjectsRequest req) {
+    public SearchResult searchObjects(SearchObjectsReq req) {
         return new SearchResult(Collections.emptyList(), 0, req.page(), req.size());
     }
 

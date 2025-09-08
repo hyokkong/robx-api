@@ -6,7 +6,7 @@ import java.math.BigDecimal;
  * Parameters for the listing search endpoint. Only a subset of the
  * documented fields are captured to keep the example concise.
  */
-public record SearchListingsRequest(
+public record SearchListingsReq(
         String type,
         String spcCd,
         String sexCd,
