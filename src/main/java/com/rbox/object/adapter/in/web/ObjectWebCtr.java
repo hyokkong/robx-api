@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
@@ -19,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import com.rbox.common.api.ApiResponse;
 import com.rbox.object.adapter.out.persistence.repository.ObjectEntity;
 import com.rbox.object.adapter.out.persistence.repository.ObjectImageEntity;
+import com.rbox.common.qr.QrCodeService;
 import com.rbox.object.application.port.in.AddImageCommand;
 import com.rbox.object.application.port.in.CreateObjectCommand;
 import com.rbox.object.application.port.in.ObjectUseCase;
@@ -32,6 +36,7 @@ import com.rbox.object.application.port.in.UpdateObjectCommand;
 @RequiredArgsConstructor
 public class ObjectWebCtr {
     private final ObjectUseCase useCase;
+    private final QrCodeService qrCodeService;
 
     /**
      * 심플 모드 개체 생성 API.
@@ -88,6 +93,21 @@ public class ObjectWebCtr {
     @GetMapping("/{id}/images")
     public ApiResponse<List<ObjectImageEntity>> listImages(@PathVariable Long id) {
         return ApiResponse.success(useCase.listImages(id, 1L));
+    }
+
+    /**
+     * QR code for object.
+     */
+    @GetMapping(value = "/{id}/qrcode")
+    public ResponseEntity<byte[]> qrcode(@PathVariable Long id,
+            @RequestParam(required = false, defaultValue = "png") String fmt,
+            @RequestParam(required = false, defaultValue = "256") Integer w) {
+        // ensure object exists and belongs to user
+        useCase.getObject(id, 1L);
+        String url = "https://app.rbox.io/o/" + id;
+        byte[] data = qrCodeService.generate(url, w, fmt);
+        MediaType media = "svg".equalsIgnoreCase(fmt) ? MediaType.valueOf("image/svg+xml") : MediaType.IMAGE_PNG;
+        return ResponseEntity.ok().contentType(media).body(data);
     }
 
     /**
