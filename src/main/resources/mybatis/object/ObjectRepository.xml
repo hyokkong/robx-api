@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rbox.object.adapter.out.persistence.repository.ObjectRepository">
+  <resultMap id="ObjectMap" type="com.rbox.object.adapter.out.persistence.repository.ObjectEntity">
+    <id property="id" column="obj_id" />
+    <result property="spcCd" column="spc_cd" />
+    <result property="name" column="name" />
+    <result property="sexCd" column="sex_cd" />
+    <result property="bthYmd" column="bth_ymd" />
+    <result property="objMode" column="obj_mode" />
+    <result property="statCd" column="stat_cd" />
+    <result property="marketOk" column="market_ok" />
+    <result property="ownUsrId" column="own_usr_id" />
+  </resultMap>
+
+  <insert id="save" parameterType="com.rbox.object.adapter.out.persistence.repository.ObjectEntity" useGeneratedKeys="true" keyProperty="id" keyColumn="obj_id">
+    INSERT INTO tb_obj (spc_cd, name, sex_cd, bth_ymd, obj_mode, stat_cd, market_ok, own_usr_id)
+    VALUES (#{spcCd}, #{name}, #{sexCd}, #{bthYmd}, #{objMode}, #{statCd}, #{marketOk}, #{ownUsrId})
+  </insert>
+
+  <select id="findById" parameterType="long" resultMap="ObjectMap">
+    SELECT obj_id, spc_cd, name, sex_cd, bth_ymd, obj_mode, stat_cd, market_ok, own_usr_id
+    FROM tb_obj
+    WHERE obj_id = #{id}
+  </select>
+
+  <select id="findByOwner" parameterType="long" resultMap="ObjectMap">
+    SELECT obj_id, spc_cd, name, sex_cd, bth_ymd, obj_mode, stat_cd, market_ok, own_usr_id
+    FROM tb_obj
+    WHERE own_usr_id = #{ownerId}
+    ORDER BY obj_id
+  </select>
+
+  <update id="update" parameterType="com.rbox.object.adapter.out.persistence.repository.ObjectEntity">
+    UPDATE tb_obj
+    SET spc_cd = #{spcCd},
+        name = #{name},
+        sex_cd = #{sexCd},
+        bth_ymd = #{bthYmd},
+        obj_mode = #{objMode},
+        stat_cd = #{statCd},
+        market_ok = #{marketOk}
+    WHERE obj_id = #{id}
+  </update>
+
+  <delete id="delete" parameterType="long">
+    DELETE FROM tb_obj WHERE obj_id = #{id}
+  </delete>
+</mapper>

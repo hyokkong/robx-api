@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rbox.breeding.adapter.out.persistence.repository.PairingRepository">
+  <resultMap id="PairingMap" type="com.rbox.breeding.adapter.out.persistence.repository.PairingEntity">
+    <id property="id" column="mat_id" />
+    <result property="femObjId" column="fem_obj_id" />
+    <result property="malObjId" column="mal_obj_id" />
+    <result property="matDt" column="mat_dt" />
+    <result property="statCd" column="stat_cd" />
+    <result property="note" column="note" />
+  </resultMap>
+
+  <insert id="save" parameterType="com.rbox.breeding.adapter.out.persistence.repository.PairingEntity" useGeneratedKeys="true" keyProperty="id" keyColumn="mat_id">
+    INSERT INTO tb_mat (fem_obj_id, mal_obj_id, mat_dt, stat_cd, note)
+    VALUES (#{femObjId}, #{malObjId}, #{matDt}, #{statCd}, #{note})
+  </insert>
+
+  <select id="findById" parameterType="long" resultMap="PairingMap">
+    SELECT mat_id, fem_obj_id, mal_obj_id, mat_dt, stat_cd, note
+    FROM tb_mat
+    WHERE mat_id = #{id}
+  </select>
+
+  <select id="findByFemObjId" parameterType="long" resultMap="PairingMap">
+    SELECT mat_id, fem_obj_id, mal_obj_id, mat_dt, stat_cd, note
+    FROM tb_mat
+    WHERE fem_obj_id = #{femObjId}
+    ORDER BY mat_dt DESC
+  </select>
+</mapper>

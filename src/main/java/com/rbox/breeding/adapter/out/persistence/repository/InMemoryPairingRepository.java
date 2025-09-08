@@ -7,12 +7,9 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.springframework.stereotype.Repository;
-
 /**
  * 메모리에 메이팅 정보를 저장하는 구현체.
  */
-@Repository
 public class InMemoryPairingRepository implements PairingRepository {
     private final Map<Long, PairingEntity> store = new ConcurrentHashMap<>();
     private final AtomicLong seq = new AtomicLong(1);

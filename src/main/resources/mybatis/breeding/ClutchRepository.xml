@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rbox.breeding.adapter.out.persistence.repository.ClutchRepository">
+  <resultMap id="ClutchMap" type="com.rbox.breeding.adapter.out.persistence.repository.ClutchEntity">
+    <id property="id" column="clt_id" />
+    <result property="matId" column="mat_id" />
+    <result property="femObjId" column="fem_obj_id" />
+    <result property="cltNo" column="clt_no" />
+    <result property="layYmd" column="lay_ymd" />
+    <result property="eggCount" column="egg_count" />
+    <result property="statCd" column="stat_cd" />
+    <result property="chkYn" column="chk_yn" />
+  </resultMap>
+
+  <insert id="save" parameterType="com.rbox.breeding.adapter.out.persistence.repository.ClutchEntity" useGeneratedKeys="true" keyProperty="id" keyColumn="clt_id">
+    INSERT INTO tb_clt (mat_id, fem_obj_id, clt_no, lay_ymd, egg_count, stat_cd, chk_yn)
+    VALUES (#{matId}, #{femObjId}, #{cltNo}, #{layYmd}, #{eggCount}, #{statCd}, #{chkYn})
+  </insert>
+
+  <select id="findById" parameterType="long" resultMap="ClutchMap">
+    SELECT clt_id, mat_id, fem_obj_id, clt_no, lay_ymd, egg_count, stat_cd, chk_yn
+    FROM tb_clt
+    WHERE clt_id = #{id}
+  </select>
+
+  <select id="findByFemObjId" parameterType="long" resultMap="ClutchMap">
+    SELECT clt_id, mat_id, fem_obj_id, clt_no, lay_ymd, egg_count, stat_cd, chk_yn
+    FROM tb_clt
+    WHERE fem_obj_id = #{femObjId}
+    ORDER BY clt_no
+  </select>
+
+  <select id="findByMatId" parameterType="long" resultMap="ClutchMap">
+    SELECT clt_id, mat_id, fem_obj_id, clt_no, lay_ymd, egg_count, stat_cd, chk_yn
+    FROM tb_clt
+    WHERE mat_id = #{matId}
+    ORDER BY clt_no
+  </select>
+
+  <update id="update" parameterType="com.rbox.breeding.adapter.out.persistence.repository.ClutchEntity">
+    UPDATE tb_clt
+    SET mat_id = #{matId},
+        fem_obj_id = #{femObjId},
+        clt_no = #{cltNo},
+        lay_ymd = #{layYmd},
+        egg_count = #{eggCount},
+        stat_cd = #{statCd},
+        chk_yn = #{chkYn}
+    WHERE clt_id = #{id}
+  </update>
+</mapper>
