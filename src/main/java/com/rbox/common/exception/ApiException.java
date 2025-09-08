@@ -14,4 +14,8 @@ public class ApiException extends RuntimeException {
     public ApiError toApiError() {
         return new ApiError(errorCode.code(), getMessage());
     }
+
+    public ErrorCode getErrorCode() {
+        return errorCode;
+    }
 }
