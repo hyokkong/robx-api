@@ -1,0 +1,32 @@
+package com.rbox.auth.adapter.in.web;
+
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
+import com.rbox.auth.application.port.in.AuthUseCase;
+import com.rbox.auth.application.port.in.LoginCommand;
+import com.rbox.auth.application.port.in.RefreshCommand;
+import com.rbox.auth.application.port.in.TokenResp;
+import com.rbox.common.api.ApiResponse;
+
+@RestController
+@RequestMapping("/auth")
+@RequiredArgsConstructor
+public class AuthWebCtr {
+    private final AuthUseCase useCase;
+
+    @PostMapping("/login")
+    public ApiResponse<TokenResp> login(@Valid @RequestBody LoginReq req) {
+        return ApiResponse.success(useCase.login(new LoginCommand(req.email(), req.password())));
+    }
+
+    @PostMapping("/refresh")
+    public ApiResponse<TokenResp> refresh(@Valid @RequestBody RefreshReq req) {
+        return ApiResponse.success(useCase.refresh(new RefreshCommand(req.refreshToken())));
+    }
+}
