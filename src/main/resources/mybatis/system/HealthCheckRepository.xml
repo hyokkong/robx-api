@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.rbox.system.adapter.out.persistence.repository.HealthCheckRepository">
+  <!-- DB 연결 상태를 확인하기 위한 단순 쿼리 -->
   <select id="selectHealth" resultType="int">
     SELECT 1
   </select>

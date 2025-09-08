@@ -9,12 +9,14 @@
     <result property="password" column="pwd" />
   </resultMap>
 
+  <!-- 이메일로 사용자 조회 -->
   <select id="findByEmail" parameterType="string" resultMap="UserMap">
     SELECT usr_id, email, nick, stat_cd, pwd
     FROM tb_usr
     WHERE email = #{email}
   </select>
 
+  <!-- ID로 사용자 조회 -->
   <select id="findById" parameterType="long" resultMap="UserMap">
     SELECT usr_id, email, nick, stat_cd, pwd
     FROM tb_usr

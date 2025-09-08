@@ -14,17 +14,30 @@ import com.rbox.auth.application.port.in.RefreshCommand;
 import com.rbox.auth.application.port.in.TokenResp;
 import com.rbox.common.api.ApiResponse;
 
+/**
+ * 인증 관련 API를 처리하는 Web Controller.
+ */
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthWebCtr {
     private final AuthUseCase useCase;
 
+    /**
+     * 로그인 API.
+     * <p>필수 입력: 이메일(email), 비밀번호(password)</p>
+     * <p>출력: access/refresh 토큰이 포함된 {@link TokenResp}</p>
+     */
     @PostMapping("/login")
     public ApiResponse<TokenResp> login(@Valid @RequestBody LoginReq req) {
         return ApiResponse.success(useCase.login(new LoginCommand(req.email(), req.password())));
     }
 
+    /**
+     * 토큰 갱신 API.
+     * <p>필수 입력: refreshToken</p>
+     * <p>출력: 새로운 access 토큰이 포함된 {@link TokenResp}</p>
+     */
     @PostMapping("/refresh")
     public ApiResponse<TokenResp> refresh(@Valid @RequestBody RefreshReq req) {
         return ApiResponse.success(useCase.refresh(new RefreshCommand(req.refreshToken())));
