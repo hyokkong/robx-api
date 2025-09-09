@@ -2,15 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.rbox.object.adapter.out.persistence.repository.ObjectRepository">
   <resultMap id="ObjectMap" type="com.rbox.object.adapter.out.persistence.repository.ObjectEntity">
-    <id property="id" column="obj_id" />
-    <result property="spcCd" column="spc_cd" />
-    <result property="name" column="name" />
-    <result property="sexCd" column="sex_cd" />
-    <result property="bthYmd" column="bth_ymd" />
-    <result property="objMode" column="obj_mode" />
-    <result property="statCd" column="stat_cd" />
-    <result property="marketOk" column="market_ok" />
-    <result property="ownUsrId" column="own_usr_id" />
+    <constructor>
+      <idArg column="obj_id" javaType="java.lang.Long" />
+      <arg column="spc_cd" javaType="java.lang.String" />
+      <arg column="name" javaType="java.lang.String" />
+      <arg column="sex_cd" javaType="java.lang.String" />
+      <arg column="bth_ymd" javaType="java.lang.String" />
+      <arg column="obj_mode" javaType="java.lang.String" />
+      <arg column="stat_cd" javaType="java.lang.String" />
+      <arg column="market_ok" javaType="java.lang.String" />
+      <arg column="own_usr_id" javaType="java.lang.Long" />
+    </constructor>
   </resultMap>
 
   <insert id="save" parameterType="com.rbox.object.adapter.out.persistence.repository.ObjectEntity" useGeneratedKeys="true" keyProperty="id" keyColumn="obj_id">

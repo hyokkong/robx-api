@@ -2,11 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.rbox.user.adapter.out.persistence.repository.UserRepository">
   <resultMap id="UserMap" type="com.rbox.user.adapter.out.persistence.repository.UserEntity">
-    <id property="id" column="usr_id" />
-    <result property="email" column="email" />
-    <result property="nick" column="nick" />
-    <result property="stat" column="stat_cd" />
-    <result property="password" column="pwd" />
+    <constructor>
+      <idArg column="usr_id" javaType="java.lang.Long" />
+      <arg column="email" javaType="java.lang.String" />
+      <arg column="nick" javaType="java.lang.String" />
+      <arg column="stat_cd" javaType="java.lang.String" />
+      <arg column="pwd" javaType="java.lang.String" />
+    </constructor>
   </resultMap>
 
   <!-- 이메일로 사용자 조회 -->

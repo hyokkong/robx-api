@@ -2,12 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.rbox.breeding.adapter.out.persistence.repository.PairingRepository">
   <resultMap id="PairingMap" type="com.rbox.breeding.adapter.out.persistence.repository.PairingEntity">
-    <id property="id" column="mat_id" />
-    <result property="femObjId" column="fem_obj_id" />
-    <result property="malObjId" column="mal_obj_id" />
-    <result property="matDt" column="mat_dt" />
-    <result property="statCd" column="stat_cd" />
-    <result property="note" column="note" />
+    <constructor>
+      <idArg column="mat_id" javaType="java.lang.Long" />
+      <arg column="fem_obj_id" javaType="java.lang.Long" />
+      <arg column="mal_obj_id" javaType="java.lang.Long" />
+      <arg column="mat_dt" javaType="java.lang.String" />
+      <arg column="stat_cd" javaType="java.lang.String" />
+      <arg column="note" javaType="java.lang.String" />
+    </constructor>
   </resultMap>
 
   <insert id="save" parameterType="com.rbox.breeding.adapter.out.persistence.repository.PairingEntity" useGeneratedKeys="true" keyProperty="id" keyColumn="mat_id">

@@ -2,14 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.rbox.breeding.adapter.out.persistence.repository.ClutchRepository">
   <resultMap id="ClutchMap" type="com.rbox.breeding.adapter.out.persistence.repository.ClutchEntity">
-    <id property="id" column="clt_id" />
-    <result property="matId" column="mat_id" />
-    <result property="femObjId" column="fem_obj_id" />
-    <result property="cltNo" column="clt_no" />
-    <result property="layYmd" column="lay_ymd" />
-    <result property="eggCount" column="egg_count" />
-    <result property="statCd" column="stat_cd" />
-    <result property="chkYn" column="chk_yn" />
+    <constructor>
+      <idArg column="clt_id" javaType="java.lang.Long" />
+      <arg column="mat_id" javaType="java.lang.Long" />
+      <arg column="fem_obj_id" javaType="java.lang.Long" />
+      <arg column="clt_no" javaType="java.lang.Integer" />
+      <arg column="lay_ymd" javaType="java.lang.String" />
+      <arg column="egg_count" javaType="java.lang.Integer" />
+      <arg column="stat_cd" javaType="java.lang.String" />
+      <arg column="chk_yn" javaType="java.lang.String" />
+    </constructor>
   </resultMap>
 
   <insert id="save" parameterType="com.rbox.breeding.adapter.out.persistence.repository.ClutchEntity" useGeneratedKeys="true" keyProperty="id" keyColumn="clt_id">
