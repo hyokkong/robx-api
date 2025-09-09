@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 /**
  * Very light in-memory service to back the v2 object API.
  */
-@Service
+@Service("objectV2Service")
 public class ObjectService {
     private final AtomicLong seq = new AtomicLong(1);
     private final Map<Long, Object> objects = new ConcurrentHashMap<>();

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 
 import com.rbox.common.api.ApiResponse;
+import com.rbox.object.ObjectServiceDelegate;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,14 +24,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequiredArgsConstructor
 @Tag(name = "Object v2", description = "개체 API v2")
 public class ObjectV2WebCtr {
-    private final ObjectService service;
+    private final ObjectServiceDelegate delegate;
 
     @PostMapping("/objects")
     @Operation(summary = "개체 생성", description = "새로운 개체를 생성합니다")
     public ApiResponse<Map<String, Long>> create(
             @RequestHeader(value = "X-RBOX-ORG-ID", required = false) Long orgId,
             @RequestBody ObjectCreateReq req) {
-        Long id = service.createObject(req.spcCd(), req.name(), req.sexCd(), req.ownerType(), orgId);
+        Long id = delegate.v2().createObject(req.spcCd(), req.name(), req.sexCd(), req.ownerType(), orgId);
         return ApiResponse.success(Map.of("objId", id));
     }
 }
