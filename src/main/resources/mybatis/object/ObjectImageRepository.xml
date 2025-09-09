@@ -2,10 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.rbox.object.adapter.out.persistence.repository.ObjectImageRepository">
   <resultMap id="ObjectImageMap" type="com.rbox.object.adapter.out.persistence.repository.ObjectImageEntity">
-    <id property="imgId" column="img_id" />
-    <result property="objId" column="obj_id" />
-    <result property="url" column="url" />
-    <result property="ordNo" column="ord_no" />
+    <constructor>
+      <idArg column="img_id" javaType="java.lang.Long" />
+      <arg column="obj_id" javaType="java.lang.Long" />
+      <arg column="url" javaType="java.lang.String" />
+      <arg column="ord_no" javaType="int" />
+    </constructor>
   </resultMap>
 
   <insert id="save" parameterType="com.rbox.object.adapter.out.persistence.repository.ObjectImageEntity" useGeneratedKeys="true" keyProperty="imgId" keyColumn="img_id">
