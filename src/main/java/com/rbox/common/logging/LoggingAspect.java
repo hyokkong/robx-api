@@ -7,6 +7,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
 /**
@@ -31,13 +32,15 @@ public class LoggingAspect {
 
     private Object logAround(ProceedingJoinPoint joinPoint, String layer) throws Throwable {
         String methodName = joinPoint.getSignature().toShortString();
-        log.info("[{}] Enter {} with args {}", layer, methodName, Arrays.toString(joinPoint.getArgs()));
+        String traceId = MDC.get(TraceIdFilter.TRACE_ID_KEY);
+        log.info("[{}][traceId={}] Enter {} with args {}", layer, traceId, methodName,
+            Arrays.toString(joinPoint.getArgs()));
         try {
             Object result = joinPoint.proceed();
-            log.info("[{}] Exit {} with result {}", layer, methodName, result);
+            log.info("[{}][traceId={}] Exit {} with result {}", layer, traceId, methodName, result);
             return result;
         } catch (Throwable e) {
-            log.error("[{}] Exception in {}", layer, methodName, e);
+            log.error("[{}][traceId={}] Exception in {}", layer, traceId, methodName, e);
             throw e;
         }
     }
