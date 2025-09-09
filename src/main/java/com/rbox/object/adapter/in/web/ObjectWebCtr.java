@@ -25,7 +25,7 @@ import com.rbox.object.adapter.out.persistence.repository.ObjectImageEntity;
 import com.rbox.common.qr.QrCodeService;
 import com.rbox.object.application.port.in.AddImageCommand;
 import com.rbox.object.application.port.in.CreateObjectCommand;
-import com.rbox.object.application.port.in.ObjectUseCase;
+import com.rbox.object.ObjectServiceDelegate;
 import com.rbox.object.application.port.in.UpdateObjectCommand;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,7 +39,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequiredArgsConstructor
 @Tag(name = "Object", description = "개체 관련 API")
 public class ObjectWebCtr {
-    private final ObjectUseCase useCase;
+    private final ObjectServiceDelegate delegate;
     private final QrCodeService qrCodeService;
 
     /**
@@ -50,7 +50,7 @@ public class ObjectWebCtr {
     @PostMapping
     @Operation(summary = "개체 생성", description = "새로운 개체를 생성합니다")
     public ApiResponse<Map<String, Long>> create(@Valid @RequestBody ObjectCreateReq req) {
-        Long id = useCase.createObject(new CreateObjectCommand(req.spcCd(), req.name(), req.sexCd(), req.bthYmd()), 1L);
+        Long id = delegate.v1().createObject(new CreateObjectCommand(req.spcCd(), req.name(), req.sexCd(), req.bthYmd()), 1L);
         Map<String, Long> data = new HashMap<>();
         data.put("id", id);
         return ApiResponse.success(data);
@@ -63,7 +63,7 @@ public class ObjectWebCtr {
     @GetMapping
     @Operation(summary = "내 개체 목록 조회", description = "소유한 개체 목록을 조회합니다")
     public ApiResponse<List<ObjectEntity>> list() {
-        return ApiResponse.success(useCase.listObjects(1L));
+        return ApiResponse.success(delegate.v1().listObjects(1L));
     }
 
     /**
@@ -73,7 +73,7 @@ public class ObjectWebCtr {
     @GetMapping("/{id}")
     @Operation(summary = "개체 상세 조회", description = "개체 ID로 상세 정보를 조회합니다")
     public ApiResponse<ObjectEntity> get(@PathVariable Long id) {
-        return ApiResponse.success(useCase.getObject(id, 1L));
+        return ApiResponse.success(delegate.v1().getObject(id, 1L));
     }
 
     /**
@@ -82,7 +82,7 @@ public class ObjectWebCtr {
     @PatchMapping("/{id}")
     @Operation(summary = "개체 정보 수정", description = "개체 정보를 수정합니다")
     public ApiResponse<Void> update(@PathVariable Long id, @Valid @RequestBody ObjectUpdateReq req) {
-        useCase.updateObject(id, new UpdateObjectCommand(req.name(), req.sexCd(), req.bthYmd()), 1L);
+        delegate.v1().updateObject(id, new UpdateObjectCommand(req.name(), req.sexCd(), req.bthYmd()), 1L);
         return ApiResponse.success(null);
     }
 
@@ -92,7 +92,7 @@ public class ObjectWebCtr {
     @DeleteMapping("/{id}")
     @Operation(summary = "개체 삭제", description = "개체를 삭제합니다")
     public ApiResponse<Void> delete(@PathVariable Long id) {
-        useCase.deleteObject(id, 1L);
+        delegate.v1().deleteObject(id, 1L);
         return ApiResponse.success(null);
     }
 
@@ -102,7 +102,7 @@ public class ObjectWebCtr {
     @GetMapping("/{id}/images")
     @Operation(summary = "개체 이미지 목록 조회", description = "개체 이미지 목록을 조회합니다")
     public ApiResponse<List<ObjectImageEntity>> listImages(@PathVariable Long id) {
-        return ApiResponse.success(useCase.listImages(id, 1L));
+        return ApiResponse.success(delegate.v1().listImages(id, 1L));
     }
 
     /**
@@ -114,7 +114,7 @@ public class ObjectWebCtr {
             @RequestParam(required = false, defaultValue = "png") String fmt,
             @RequestParam(required = false, defaultValue = "256") Integer w) {
         // ensure object exists and belongs to user
-        useCase.getObject(id, 1L);
+        delegate.v1().getObject(id, 1L);
         String url = "https://app.rbox.io/o/" + id;
         byte[] data = qrCodeService.generate(url, w, fmt);
         MediaType media = "svg".equalsIgnoreCase(fmt) ? MediaType.valueOf("image/svg+xml") : MediaType.IMAGE_PNG;
@@ -127,7 +127,7 @@ public class ObjectWebCtr {
     @PostMapping("/{id}/images")
     @Operation(summary = "개체 이미지 추가", description = "개체에 이미지를 추가합니다")
     public ApiResponse<Map<String, Long>> addImage(@PathVariable Long id, @Valid @RequestBody ObjectImageReq req) {
-        Long imgId = useCase.addImage(id, new AddImageCommand(req.url(), req.ordNo()), 1L);
+        Long imgId = delegate.v1().addImage(id, new AddImageCommand(req.url(), req.ordNo()), 1L);
         return ApiResponse.success(Map.of("imgId", imgId));
     }
 
@@ -137,7 +137,7 @@ public class ObjectWebCtr {
     @DeleteMapping("/{id}/images/{imgId}")
     @Operation(summary = "개체 이미지 삭제", description = "개체 이미지를 삭제합니다")
     public ApiResponse<Void> deleteImage(@PathVariable Long id, @PathVariable Long imgId) {
-        useCase.deleteImage(id, imgId, 1L);
+        delegate.v1().deleteImage(id, imgId, 1L);
         return ApiResponse.success(null);
     }
 }

@@ -20,7 +20,7 @@ import com.rbox.object.application.port.in.UpdateObjectCommand;
 /**
  * 개체 관련 비즈니스 로직을 처리하는 서비스.
  */
-@Service
+@Service("objectV1Service")
 @RequiredArgsConstructor
 public class ObjectService implements ObjectUseCase {
     private final ObjectRepository repository;
