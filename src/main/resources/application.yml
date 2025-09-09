@@ -11,3 +11,6 @@ mybatis:
   mapper-locations: classpath:mybatis/**/*.xml
   configuration:
     log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+jwt:
+  secret: "K1l8oAp2s3d4f5g6h7j8k9l0m1n2b3v4" # random 32-char key
+  expiration: 2592000 # 30 days in seconds

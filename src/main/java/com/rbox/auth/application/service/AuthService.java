@@ -18,6 +18,7 @@ import com.rbox.user.adapter.out.persistence.repository.UserRepository;
 @RequiredArgsConstructor
 public class AuthService implements AuthUseCase {
     private final UserRepository repository;
+    private final JwtTokenProvider tokenProvider;
 
     /**
      * 사용자의 로그인 요청을 처리한다.
@@ -29,7 +30,9 @@ public class AuthService implements AuthUseCase {
     public TokenResp login(LoginCommand command) {
         var user = repository.findByEmail(command.email());
         if (user != null && command.password().equals(user.password())) {
-            return new TokenResp("ACCESS_TOKEN", "REFRESH_TOKEN");
+            String accessToken = tokenProvider.generateAccessToken(user);
+            String refreshToken = tokenProvider.generateRefreshToken(user);
+            return new TokenResp(accessToken, refreshToken);
         }
         throw new ApiException(ErrorCode.UNAUTHORIZED, "invalid credentials");
     }
@@ -42,9 +45,17 @@ public class AuthService implements AuthUseCase {
      */
     @Override
     public TokenResp refresh(RefreshCommand command) {
-        if ("REFRESH_TOKEN".equals(command.refreshToken())) {
-            return new TokenResp("NEW_ACCESS_TOKEN", "REFRESH_TOKEN");
+        if (!tokenProvider.validateToken(command.refreshToken())) {
+            throw new ApiException(ErrorCode.UNAUTHORIZED, "invalid refresh token");
         }
-        throw new ApiException(ErrorCode.UNAUTHORIZED, "invalid refresh token");
+        var claims = tokenProvider.getClaims(command.refreshToken());
+        Long userId = Long.parseLong(claims.getSubject());
+        var user = repository.findById(userId);
+        if (user == null) {
+            throw new ApiException(ErrorCode.UNAUTHORIZED, "invalid refresh token");
+        }
+        String accessToken = tokenProvider.generateAccessToken(user);
+        String refreshToken = tokenProvider.generateRefreshToken(user);
+        return new TokenResp(accessToken, refreshToken);
     }
 }
