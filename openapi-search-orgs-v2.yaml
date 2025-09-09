@@ -146,6 +146,43 @@ paths:
                 roleCd: { type: string, enum: [OWNER, ADMIN, EDITOR, VIEWER] }
       responses: { '201': { description: Added } }
 
+  /v2/orgs/{orgId}/members/{userId}:
+    patch:
+      tags: [Orgs]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: orgId
+          required: true
+          schema: { type: integer, format: int64 }
+        - in: path
+          name: userId
+          required: true
+          schema: { type: integer, format: int64 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [roleCd]
+              properties:
+                roleCd: { type: string, enum: [OWNER, ADMIN, EDITOR, VIEWER] }
+      responses: { '200': { description: Updated } }
+    delete:
+      tags: [Orgs]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: orgId
+          required: true
+          schema: { type: integer, format: int64 }
+        - in: path
+          name: userId
+          required: true
+          schema: { type: integer, format: int64 }
+      responses: { '200': { description: Deleted } }
+
   /v2/context:
     get:
       tags: [Orgs]
