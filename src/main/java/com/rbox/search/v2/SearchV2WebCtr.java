@@ -1,7 +1,5 @@
 package com.rbox.search.v2;
 
-import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 
 import com.rbox.common.api.ApiResponse;
+import com.rbox.search.v2.SearchService.SearchResult;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,7 +26,7 @@ public class SearchV2WebCtr {
 
     @GetMapping("/listings")
     @Operation(summary = "리스트 검색", description = "리스트를 검색합니다")
-    public ApiResponse<Map<String, Object>> listings(
+    public ApiResponse<SearchResult> listings(
             @RequestParam(required = false, defaultValue = "ALL") String type,
             @RequestParam(required = false) String spcCd,
             @RequestParam(required = false) String sexCd,
@@ -47,18 +46,13 @@ public class SearchV2WebCtr {
                 priceMin == null ? null : java.math.BigDecimal.valueOf(priceMin),
                 priceMax == null ? null : java.math.BigDecimal.valueOf(priceMax),
                 morphMode, morphCat, morphIds, hasImage, ownerUserId, ownerOrgId, sort, page, size);
-        SearchService.SearchResult result = service.searchListings(req);
-        Map<String, Object> data = new HashMap<>();
-        data.put("content", result.content());
-        data.put("total", result.total());
-        data.put("page", result.page());
-        data.put("size", result.size());
-        return ApiResponse.success(data);
+        SearchResult result = service.searchListings(req);
+        return ApiResponse.success(result);
     }
 
     @GetMapping("/objects")
     @Operation(summary = "개체 검색", description = "개체를 검색합니다")
-    public ApiResponse<Map<String, Object>> objects(
+    public ApiResponse<SearchResult> objects(
             @RequestParam(required = false) String spcCd,
             @RequestParam(required = false) String sexCd,
             @RequestParam(required = false) String sizeCd,
@@ -68,13 +62,8 @@ public class SearchV2WebCtr {
             @RequestParam(required = false, defaultValue = "1") Integer page,
             @RequestParam(required = false, defaultValue = "20") Integer size) {
         SearchObjectsReq req = new SearchObjectsReq(spcCd, sexCd, sizeCd, morphMode, morphIds, sort, page, size);
-        SearchService.SearchResult result = service.searchObjects(req);
-        Map<String, Object> data = new HashMap<>();
-        data.put("content", result.content());
-        data.put("total", result.total());
-        data.put("page", result.page());
-        data.put("size", result.size());
-        return ApiResponse.success(data);
+        SearchResult result = service.searchObjects(req);
+        return ApiResponse.success(result);
     }
 }
 

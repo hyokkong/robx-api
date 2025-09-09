@@ -38,9 +38,9 @@ public class OrgV2WebCtr {
     @PostMapping("/orgs")
     @Operation(summary = "조직 생성", description = "새로운 조직을 생성합니다")
     public ApiResponse<Map<String, Long>> createOrg(@RequestHeader("X-USER-ID") String user,
-            @RequestBody Map<String, String> body) {
-        String orgNm = body.getOrDefault("orgNm", "");
-        String orgTp = body.getOrDefault("orgTp", "SHOP");
+            @RequestBody OrgCreateReq body) {
+        String orgNm = body.orgNm();
+        String orgTp = body.orgTp() == null ? "SHOP" : body.orgTp();
         OrgService.Org org = service.createOrg(getUserId(user), orgNm, orgTp);
         return ApiResponse.success(Map.of("orgId", org.orgId()));
     }
@@ -54,19 +54,16 @@ public class OrgV2WebCtr {
 
     @PostMapping("/orgs/{orgId}/members")
     @Operation(summary = "멤버 추가", description = "조직에 멤버를 추가합니다")
-    public ApiResponse<Void> addMember(@PathVariable Long orgId, @RequestBody Map<String, Object> body) {
-        Long userId = ((Number) body.get("userId")).longValue();
-        String roleCd = (String) body.get("roleCd");
-        service.addMember(orgId, userId, roleCd);
+    public ApiResponse<Void> addMember(@PathVariable Long orgId, @RequestBody OrgMemberAddReq body) {
+        service.addMember(orgId, body.userId(), body.roleCd());
         return ApiResponse.success(null);
     }
 
     @PatchMapping("/orgs/{orgId}/members/{userId}")
     @Operation(summary = "멤버 역할 변경", description = "조직 멤버의 역할을 변경합니다")
     public ApiResponse<Void> changeMember(@PathVariable Long orgId, @PathVariable Long userId,
-            @RequestBody Map<String, String> body) {
-        String roleCd = body.get("roleCd");
-        service.changeMember(orgId, userId, roleCd);
+            @RequestBody OrgMemberRoleReq body) {
+        service.changeMember(orgId, userId, body.roleCd());
         return ApiResponse.success(null);
     }
 
